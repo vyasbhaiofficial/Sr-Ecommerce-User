@@ -76,7 +76,7 @@ export default function RecentlyViewedSection() {
 
   return (
     <section className="px-4 py-14 sm:px-6 md:px-10 lg:px-14">
-      <div className="mx-auto max-w-[1440px]">
+      <div className="mx-auto max-w-360">
         {/* Heading */}
         <div className="mb-8 flex items-end justify-between">
           <div>

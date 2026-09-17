@@ -28,7 +28,7 @@ const LinePath = ({ className, scrollYProgress }) => {
   );
 };
 
-export default function Sr Software ScrollStory() {
+export default function SrSoftwareScrollStory() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -119,4 +119,4 @@ export default function Sr Software ScrollStory() {
   );
 }
 
-export { Sr Software ScrollStory };
+export { SrSoftwareScrollStory };

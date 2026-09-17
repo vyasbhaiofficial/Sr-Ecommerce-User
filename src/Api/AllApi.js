@@ -263,6 +263,12 @@ export const addRecentlyViewed = (body) => api.post("/api/user/recently-viewed",
 
 export const submitContactForm = (body) => publicApi.post('/api/user/contact/submit', body);
 
+// ═══════════════════════════════════════════════════════════
+//  POLICIES
+// ═══════════════════════════════════════════════════════════
+
+export const getPolicy = (type) => publicApi.get('/api/user/policies', { params: { type } });
+
 // Notifications
 export const getNotifications = (params) => api.get('/api/user/notifications', { params });
 export const markNotificationRead = (id) => api.patch(`/api/user/notifications/${id}/read`);
@@ -271,3 +277,4 @@ export const deleteNotification = (id) => api.delete(`/api/user/notifications/${
 export const deleteBulkNotifications = (ids) => api.delete('/api/user/notifications/bulk', { data: { ids } });
 export const registerFCMToken = (token) => api.post('/api/user/notifications/fcm/register', { token });
 export const removeFCMToken = (token) => api.post('/api/user/notifications/fcm/remove', { token });
+

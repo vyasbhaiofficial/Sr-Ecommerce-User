@@ -147,23 +147,32 @@ export function getCategoryHref(category = {}) {
 }
 
 export function normalizeBannerList(payload) {
-  const list = payload?.data || payload?.banners || payload || [];
-  return Array.isArray(list) 
-    ? list.filter(Boolean).map(banner => ({
-        ...banner,
-        // Backward compatibility: ensure image (legacy) is available as desktopImage and vice versa
-        desktopImage: banner.desktopImage || banner.image,
-        mobileImage: banner.mobileImage || null,
-        image: banner.desktopImage || banner.image, // keep legacy image field
-        // Map subtitle to description for HeroSection compatibility
-        description: banner.description || banner.subtitle
-      }))
-    : [];
+  let list = [];
+  if (Array.isArray(payload)) {
+    list = payload;
+  } else if (Array.isArray(payload?.data?.data)) {
+    list = payload.data.data;
+  } else if (Array.isArray(payload?.data)) {
+    list = payload.data;
+  } else if (Array.isArray(payload?.banners)) {
+    list = payload.banners;
+  } else if (Array.isArray(payload?.data?.banners)) {
+    list = payload.data.banners;
+  }
+
+  return list.filter(Boolean).map(banner => ({
+    ...banner,
+    // Backward compatibility: ensure image (legacy) is available as desktopImage and vice versa
+    desktopImage: banner.desktopImage || banner.image,
+    mobileImage: banner.mobileImage || null,
+    image: banner.desktopImage || banner.image, // keep legacy image field
+    // Map subtitle to description for HeroSection compatibility
+    description: banner.description || banner.subtitle
+  }));
 }
 
 export function normalizeProductList(payload) {
   if (Array.isArray(payload)) {
-    // Remove duplicates from array
     const seen = new Set();
     return payload.filter(item => {
       const id = item._id || item.id;
@@ -173,8 +182,13 @@ export function normalizeProductList(payload) {
     });
   }
 
-  const list = payload?.products || payload?.data?.products || payload?.data || [];
-  // Remove duplicates
+  const list =
+    payload?.products ||
+    payload?.data?.products ||
+    (Array.isArray(payload?.data?.data) ? payload.data.data : null) ||
+    (Array.isArray(payload?.data) ? payload.data : null) ||
+    [];
+
   const seen = new Set();
   return list.filter(item => {
     const id = item._id || item.id;
@@ -189,7 +203,13 @@ export function normalizeCategoryList(payload) {
     return payload.filter(Boolean);
   }
 
-  const list = payload?.categories || payload?.data?.categories || payload?.data || [];
+  const list =
+    payload?.categories ||
+    payload?.data?.categories ||
+    (Array.isArray(payload?.data?.data) ? payload.data.data : null) ||
+    (Array.isArray(payload?.data) ? payload.data : null) ||
+    [];
+
   return Array.isArray(list) ? list.filter(Boolean) : [];
 }
 
@@ -198,7 +218,13 @@ export function normalizeFeaturedReviews(payload) {
     return payload.filter(Boolean);
   }
 
-  const list = payload?.reviews || payload?.data?.reviews || payload?.data || [];
+  const list =
+    payload?.reviews ||
+    payload?.data?.reviews ||
+    (Array.isArray(payload?.data?.data) ? payload.data.data : null) ||
+    (Array.isArray(payload?.data) ? payload.data : null) ||
+    [];
+
   return Array.isArray(list) ? list.filter(Boolean) : [];
 }
 

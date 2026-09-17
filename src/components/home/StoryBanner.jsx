@@ -18,8 +18,15 @@ export default function StoryBanner() {
     const fetchStories = async () => {
       try {
         const res = await getStories();
-        if (res?.data?.length > 0) {
-          setStories(res.data);
+        const list = Array.isArray(res)
+          ? res
+          : Array.isArray(res?.data?.data)
+          ? res.data.data
+          : Array.isArray(res?.data)
+          ? res.data
+          : [];
+        if (list.length > 0) {
+          setStories(list);
         } else {
           // Fallback static story if no data
           setStories([

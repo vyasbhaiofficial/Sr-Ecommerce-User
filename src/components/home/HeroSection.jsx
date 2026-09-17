@@ -8,20 +8,24 @@ import { getBanners } from "@/Api/AllApi";
 import { normalizeBannerList, resolveMediaSrc } from "@/lib/storefront";
 
 export default function HeroSection() {
-  const [bannerImage, setBannerImage] = useState(null);
+  const [banner, setBanner] = useState(null);
 
   useEffect(() => {
     getBanners()
       .then((response) => {
         const list = normalizeBannerList(response);
         if (list && list.length > 0) {
-          const first = list[0];
-          const src = resolveMediaSrc(first.desktopImage || first.image);
-          if (src) setBannerImage(src);
+          setBanner(list[0]);
         }
       })
-      .catch(() => {}); // silent fallback to default image
+      .catch((err) => {
+        console.error("Failed to fetch banners:", err);
+      });
   }, []);
+
+  const bannerImage = banner
+    ? resolveMediaSrc(banner.desktopImage || banner.image)
+    : null;
 
   return (
     <section className="relative overflow-hidden bg-white pt-10 pb-4 sm:pt-28 md:pt-30 lg:pb-8">
@@ -53,24 +57,32 @@ export default function HeroSection() {
 
             {/* Headline */}
             <h1 className="max-w-2xl font-serif text-[2.25rem] xs:text-[2.5rem] font-light leading-[1.08] tracking-tight text-stone-900 sm:text-[clamp(2.75rem,5.5vw,4.25rem)]">
-              Explore, shop,<br />
-              <span className="font-extrabold text-[#047857]">repeat again.</span>
+              {banner?.title ? (
+                <span>{banner.title}</span>
+              ) : (
+                <>
+                  Explore, shop,<br />
+                  <span className="font-extrabold text-[#047857]">repeat again.</span>
+                </>
+              )}
             </h1>
 
             {/* Description */}
             <p className="max-w-lg text-sm leading-7 text-stone-500 sm:text-base sm:leading-8">
-              SR Ecommerce is a driving force behind curated lifestyle experiences. Explore a handpicked collection of apparel, home essentials, and accessories crafted for modern living.
+              {banner?.subtitle || banner?.description || (
+                "SR Ecommerce is a driving force behind curated lifestyle experiences. Explore a handpicked collection of apparel, home essentials, and accessories crafted for modern living."
+              )}
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center">
               <Button
-                href="/shop"
+                href={banner?.buttonLink || "/shop"}
                 size="lg"
                 className="w-full sm:w-auto hover:scale-[1.01] active:scale-95"
                 style={{ backgroundColor: "#047857", color: "white", padding: "14px 36px" }}
               >
-                Shop Collection
+                {banner?.buttonText || "Shop Collection"}
               </Button>
               <Button
                 href="/collections"
@@ -129,7 +141,7 @@ export default function HeroSection() {
             <div className="relative overflow-hidden rounded-[28px] border border-stone-100 shadow-md aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/3] bg-stone-100 group">
               <img
                 src={bannerImage || "/images/hero-1.jpg"}
-                alt="SR Ecommerce Hero Banner"
+                alt={banner?.title || "SR Ecommerce Hero Banner"}
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
               {/* Subtle gradient overlay at bottom */}
@@ -137,10 +149,10 @@ export default function HeroSection() {
               {/* Badge on image */}
               <div className="absolute bottom-5 left-5 right-5 text-white">
                 <span className="inline-block rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-emerald-200 backdrop-blur-md">
-                  New Collection
+                  {banner?.subtitle || "Featured Collection"}
                 </span>
                 <h2 className="mt-2 text-base font-bold sm:text-lg">
-                  Designed for comfort,<br />crafted for elegance.
+                  {banner?.title || "Designed for comfort, crafted for elegance."}
                 </h2>
               </div>
             </div>
